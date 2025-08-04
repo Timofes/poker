@@ -218,7 +218,7 @@ Resulthand checkStraightFlash(vector<Hand> cart){
         return Resulthand{vector<Hand>{}, Hand{}, Combs{0}, 0};
 }
 
-Resulthand getCombs(Hand hand, Hand hand1, vector<Hand> table){
+Resulthand getCombs(Hand& hand, Hand& hand1, vector<Hand>& table){
     vector<Hand> allCart = table;
     allCart.push_back(hand);
     allCart.push_back(hand1);
@@ -366,61 +366,9 @@ int winHand(Resulthand one, Resulthand two){
     return 0;
 }
 
-void procentWin(Resulthand combs, vector<Hand> table, std::set<Hand> handCart, Statistic& stat){
+void duel(Hand one1, Hand one2, Hand two1, Hand two2, Statistic& stat, vector<Hand> freeCart){
     
-    for(auto x : table){
-        handCart.insert(x);
-    }
-
-    vector<Hand> freeCart;
-    for(int i = Cart::two; i <= Cart::A; i++){
-        for(int j = Suit::spades; j <= Suit::clubs; j++){
-            if(handCart.count({Cart{i}, Suit{j}}) == 0){
-                freeCart.push_back({Cart{i}, Suit{j}});
-            }
-        }
-    }
-
-    auto w = 0; auto l = 0; auto n = 0;
-
-    for(int i = 0; i < freeCart.size() - 1; i++){
-        for(int j = i + 1; j < freeCart.size(); j++){
-            auto win = winHand(combs, getCombs(freeCart[i], freeCart[j], table));
-            if(win == 1){
-                w++;
-            } else if(win == 0){
-                n++;
-            }
-            else{
-                l++;
-            }
-        }
-    }
-
-    stat.win += w;
-    stat.draw += n;
-    stat.lose += l;
-}
-
-int main(){
-    Hand hand1 = {Cart::A, Suit::clubs};
-    Hand hand2 = {Cart::A, Suit::diamonds};
-    std::set<Hand> handCart;
-    handCart.insert(hand1);
-    handCart.insert(hand2);
-
-    vector<Hand> freeCart;
-    for(int i = Cart::two; i <= Cart::A; i++){
-        for(int j = Suit::spades; j <= Suit::clubs; j++){
-            if(handCart.count({Cart{i}, Suit{j}}) == 0){
-                freeCart.push_back({Cart{i}, Suit{j}});
-            }
-        }
-    }
-
-    Statistic stat;
-
-    for(int i1 = 0; i1 < freeCart.size() - 4; i1++){
+    for(long i1 = 0; i1 < freeCart.size() - 4; i1++){
         for(int i2 = i1 + 1; i2 < freeCart.size() - 3; i2++){
             for(int i3 = i2 + 1; i3 < freeCart.size() - 2; i3++){
                 for(int i4 = i3 + 1; i4 < freeCart.size() - 1; i4++){
@@ -432,15 +380,47 @@ int main(){
                             freeCart[i4],
                             freeCart[i5]
                         };
-                        auto combs = getCombs(hand1, hand2, table);
-                        procentWin(combs, table, handCart, stat);
+                        auto combs1 = getCombs(one1, one2, table);
+                        auto combs2 = getCombs(two1, two2, table);
+                        auto win = winHand(combs1, combs2);
+                        if(win == 1){
+                            stat.win++;
+                        } else if(win == 0){
+                            stat.draw++;
+                        }
+                        else{
+                            stat.lose++;
+                        }
                     }
                 }
-                stat.print();
+            }
+        }
+        stat.print();
+    }
+}
+
+int main(){
+    Hand hand1 = {Cart::A, Suit::clubs};
+    Hand hand2 = {Cart::A, Suit::diamonds};
+    Hand hand3 = {Cart::two, Suit::clubs};
+    Hand hand4 = {Cart::two, Suit::diamonds};
+    std::set<Hand> handCart;
+    handCart.insert(hand1);
+    handCart.insert(hand2);
+    handCart.insert(hand3);
+    handCart.insert(hand4);
+
+    vector<Hand> freeCart;
+    for(int i = Cart::two; i <= Cart::A; i++){
+        for(int j = Suit::spades; j <= Suit::clubs; j++){
+            if(handCart.count({Cart{i}, Suit{j}}) == 0){
+                freeCart.push_back({Cart{i}, Suit{j}});
             }
         }
     }
 
+    Statistic stat;
+    duel(hand1, hand2, hand3, hand4, stat, freeCart);
     stat.print();
 
     return 0;
