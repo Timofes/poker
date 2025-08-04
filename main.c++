@@ -368,6 +368,10 @@ int winHand(Resulthand one, Resulthand two){
 
 void procentWin(Resulthand combs, vector<Hand> table, std::set<Hand> handCart, Statistic& stat){
     
+    for(auto x : table){
+        handCart.insert(x);
+    }
+
     vector<Hand> freeCart;
     for(int i = Cart::two; i <= Cart::A; i++){
         for(int j = Suit::spades; j <= Suit::clubs; j++){
@@ -416,10 +420,10 @@ int main(){
 
     Statistic stat;
 
-    for(int i1 = 0; i1 < freeCart.size(); i1++){
-        for(int i2 = i1 + 1; i2 < freeCart.size(); i2++){
-            for(int i3 = i2 + 1; i3 < freeCart.size(); i3++){
-                for(int i4 = i3 + 1; i4 < freeCart.size(); i4++){
+    for(int i1 = 0; i1 < freeCart.size() - 4; i1++){
+        for(int i2 = i1 + 1; i2 < freeCart.size() - 3; i2++){
+            for(int i3 = i2 + 1; i3 < freeCart.size() - 2; i3++){
+                for(int i4 = i3 + 1; i4 < freeCart.size() - 1; i4++){
                     for(int i5 = i4 + 1; i5 < freeCart.size(); i5++){
                         vector<Hand> table{
                             freeCart[i1],
