@@ -106,18 +106,18 @@ void application::printTable(HDC hdc){
 
             Statistic sum;
             int iCorrect = (i - startXTable) / widthCellTable;
-            int jCorrect = (j - startYTable) / heightCellTable; 
+            int jCorrect = (j - startYTable) / heightCellTable;
             for(int ii = 0; ii < COUNT_SUIT; ii++){
                 for(int jj = 0; jj < COUNT_SUIT; jj++){
                     Statistic temp = data[
-                        COUNT_SUIT * iCorrect + COUNT_SUIT * COUNT_SUIT * COUNT_SUIT * 
-                        jCorrect + ii * COUNT_SUIT * COUNT_SUIT + jj];
+                        COUNT_SUIT * iCorrect + COUNT_ALL_CART * COUNT_SUIT *
+                        jCorrect + ii * COUNT_ALL_CART + jj];
                     sum.win += temp.win;
                     sum.draw += temp.draw;
                     sum.lose += temp.lose;
                 }
             }
-            long long total = sum.draw + sum.lose + sum.win;
+            double total = sum.draw + sum.lose + sum.win;
             double procW = 0;
             double procL = 0;
             double procD = 0;

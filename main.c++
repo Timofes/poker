@@ -390,13 +390,13 @@ void duel(Hand one1, Hand one2, Hand two1, Hand two2, Statistic& stat, vector<Ha
         stat.print();
     }
 }
-
+/*
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow){
     application A;
     A.WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
     return 0;
-}
-/*
+}*/
+
 int main(){
 
     vector<Hand> freeCartOnePlayer;
@@ -459,4 +459,3 @@ int main(){
 
     return 0;
 }
-*/

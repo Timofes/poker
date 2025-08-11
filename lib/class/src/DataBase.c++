@@ -3,8 +3,7 @@
 #include "../../stdafx.h++"
 
 Error DataBase::load(string& file){
-    ifstream loadfile;
-    loadfile.open(file);
+    std::ifstream loadfile(file);
     
     if(!loadfile.is_open()){
        return ERROR_OPEN_FILE;
@@ -67,21 +66,18 @@ void DataBase::setCart(Statistic& stat, Hand left, Hand right){
     auto maxS = max(left.suit, right.suit) - 1;
     auto minS = min(left.suit, right.suit) - 1;*/
 
-    data[COUNT_SUIT * left.cart + COUNT_SUIT * COUNT_SUIT * COUNT_SUIT * right.cart + left.suit * COUNT_SUIT * COUNT_SUIT + right.suit] = stat;
+    data[COUNT_SUIT * (left.cart - 2) + COUNT_ALL_CART * COUNT_SUIT *
+        (right.cart - 2) + (left.suit - 1) * COUNT_ALL_CART + (right.suit - 1)] = stat;
 }
 
 void DataBase::addCart(Statistic& stat, Hand left, Hand right){
-    data[COUNT_SUIT * left.cart + COUNT_SUIT * COUNT_SUIT * COUNT_SUIT * right.cart + left.suit * COUNT_SUIT * COUNT_SUIT + right.suit] += stat;
+    data[COUNT_SUIT * (left.cart - 2) + COUNT_ALL_CART * COUNT_SUIT *
+        (right.cart - 2) + (left.suit - 1) * COUNT_ALL_CART + (right.suit - 1)] += stat;
 }
 
 Statistic DataBase::getCart(Hand left, Hand right){
-    auto maxC = max(left.cart, right.cart) - 2;
-    auto minC = min(left.cart, right.cart) - 2;
-
-    auto maxS = max(left.suit, right.suit) - 1;
-    auto minS = min(left.suit, right.suit) - 1;
-
-    return data[COUNT_SUIT * maxC + COUNT_SUIT * COUNT_SUIT * COUNT_SUIT * minC + minS * COUNT_SUIT * COUNT_SUIT + maxS];
+    return data[COUNT_SUIT * (left.cart - 2) + COUNT_ALL_CART * COUNT_SUIT *
+        (right.cart - 2) + (left.suit - 1) * COUNT_ALL_CART + (right.suit - 1)];
 }
 
 std::string shortenNumber(long num) {
@@ -108,12 +104,15 @@ std::string shortenNumber(long num) {
 void DataBase::print(int max){
     int count = max * max * COUNT_SUIT * COUNT_SUIT;
 
-    for(int i = 0; i < count; i++){
-        if(i % (COUNT_SUIT * max) == 0){
-            cout << endl;
+    for(int i = 0; i < data.size(); i++){
+        if(i % COUNT_ALL_CART < max * COUNT_SUIT && i / COUNT_ALL_CART < max * COUNT_SUIT){
+            if(i % COUNT_ALL_CART == 0){
+                cout << endl;
+            }
+            cout << fixed << setw(4) << shortenNumber(data[i].win) << " " 
+                << setw(4)  << shortenNumber(data[i].draw) << " " 
+                << setw(4) << shortenNumber(data[i].lose) << "  ";
         }
-        cout << fixed << setw(4) << shortenNumber(data[i].win) << " " 
-            << setw(4)  << shortenNumber(data[i].draw) << " " 
-            << setw(4) << shortenNumber(data[i].lose) << "  ";
     }
+
 }
