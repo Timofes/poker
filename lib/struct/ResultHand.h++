@@ -1,13 +1,8 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <string>
+#include "../stdafx.h++"
 
-#include "Hand.h++"
-#include "Combs.h++"
-
-struct Resulthand{
+struct ResultHand{
     std::vector<Hand> high;
     Hand kiker;
     Combs comb;

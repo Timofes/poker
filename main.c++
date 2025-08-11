@@ -1,12 +1,4 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <set>
-
-#include "lib/Hand.h++"
-#include "lib/Combs.h++"
-#include "lib/ResultHand.h++"
-#include "lib/Statistic.h++"
+#include "lib/stdafx.h++"
 
 using namespace std;
 
@@ -41,7 +33,7 @@ bool sortSuit(Hand& A, Hand& B){
     return A.suit == B.suit ? A.cart > B.cart : A.suit > B.suit;
 }
 
-Resulthand checkStraight(vector<Hand> cart){
+ResultHand checkStraight(vector<Hand> cart){
     auto iter = cart.begin();
     while(iter + 1 != cart.end()){
         Hand first = *iter;
@@ -55,7 +47,7 @@ Resulthand checkStraight(vector<Hand> cart){
     }
 
     if(cart.size() < 5){
-        return Resulthand{vector<Hand>{}, Hand{}, Combs{0}, 0};
+        return ResultHand{vector<Hand>{}, Hand{}, Combs{0}, 0};
     }
 
     for(size_t i = 0; i <= cart.size() - 5; i++){
@@ -66,7 +58,7 @@ Resulthand checkStraight(vector<Hand> cart){
             }
         }   
         if(j == i + 5){
-            return Resulthand{vector<Hand>{cart[i]}, Hand{}, Combs::straight, 1};
+            return ResultHand{vector<Hand>{cart[i]}, Hand{}, Combs::straight, 1};
         }
     }
 
@@ -78,15 +70,15 @@ Resulthand checkStraight(vector<Hand> cart){
                 (cart[i + 2].cart == 3) &&
                 (cart[i + 1].cart == 2)
             ){
-                return Resulthand{vector<Hand>{cart[i + 4]}, Hand{}, Combs::straight, 1};
+                return ResultHand{vector<Hand>{cart[i + 4]}, Hand{}, Combs::straight, 1};
             }
         }
     }
 
-    return Resulthand{vector<Hand>{}, Hand{}, Combs{0}, 0};
+    return ResultHand{vector<Hand>{}, Hand{}, Combs{0}, 0};
 }
 
-Resulthand checkFlash(vector<Hand> cart){
+ResultHand checkFlash(vector<Hand> cart){
     auto suit = moreSuit(cart);
 
     auto iter = cart.begin();
@@ -100,11 +92,11 @@ Resulthand checkFlash(vector<Hand> cart){
     }
 
     if(cart.size() < 5){
-        return Resulthand{vector<Hand>{}, Hand{}, Combs{0}, 0};
+        return ResultHand{vector<Hand>{}, Hand{}, Combs{0}, 0};
     }
 
 
-    return Resulthand{
+    return ResultHand{
         vector<Hand>{
             cart[0],
             cart[1],
@@ -118,9 +110,9 @@ Resulthand checkFlash(vector<Hand> cart){
     };
 }
 
-Resulthand countLoop(vector<Hand> cart, int sizeLoop){
+ResultHand countLoop(vector<Hand> cart, int sizeLoop){
     int nowLoop = 0;
-    Resulthand ans;
+    ResultHand ans;
 
     if(sizeLoop == 1){
         ans.comb = Combs::pair;
@@ -129,7 +121,7 @@ Resulthand countLoop(vector<Hand> cart, int sizeLoop){
     } else if(sizeLoop == 3){
         ans.comb = Combs::kare;
     } else{
-        return Resulthand{};
+        return ResultHand{};
     }
 
     for(int i = 0; i < cart.size() - 1; i++){
@@ -169,7 +161,7 @@ Resulthand countLoop(vector<Hand> cart, int sizeLoop){
     return ans; 
 }
 
-Resulthand checkStraightFlash(vector<Hand> cart){
+ResultHand checkStraightFlash(vector<Hand> cart){
     auto suit = moreSuit(cart);
 
     auto iter = cart.begin();
@@ -183,7 +175,7 @@ Resulthand checkStraightFlash(vector<Hand> cart){
     }
 
     if(cart.size() < 5){
-        return Resulthand{vector<Hand>{}, Hand{}, Combs{0}, 0};
+        return ResultHand{vector<Hand>{}, Hand{}, Combs{0}, 0};
     }
 
     for(size_t i = 0; i <= cart.size() - 5; i++){
@@ -194,7 +186,7 @@ Resulthand checkStraightFlash(vector<Hand> cart){
             }
         }   
         if(j == i + 5){
-            return Resulthand{vector<Hand>{cart[i]}, Hand{}, Combs::straight_flash, 1};
+            return ResultHand{vector<Hand>{cart[i]}, Hand{}, Combs::straight_flash, 1};
         }
     }
 
@@ -210,20 +202,20 @@ Resulthand checkStraightFlash(vector<Hand> cart){
                 (cart[i + 2].suit == cart[i + 1].suit) &&
                 (cart[i + 1].suit == cart[i].suit)
             ){
-                return Resulthand{vector<Hand>{cart[i + 4]}, Hand{}, Combs::straight_flash, 1};
+                return ResultHand{vector<Hand>{cart[i + 4]}, Hand{}, Combs::straight_flash, 1};
             }
         }
     }
 
-        return Resulthand{vector<Hand>{}, Hand{}, Combs{0}, 0};
+        return ResultHand{vector<Hand>{}, Hand{}, Combs{0}, 0};
 }
 
-Resulthand getCombs(Hand& hand, Hand& hand1, vector<Hand>& table){
+ResultHand getCombs(Hand& hand, Hand& hand1, vector<Hand>& table){
     vector<Hand> allCart = table;
     allCart.push_back(hand);
     allCart.push_back(hand1);
 
-    Resulthand ans;
+    ResultHand ans;
 
     sort(allCart.begin(), allCart.end(), sortCart);
     
@@ -233,8 +225,8 @@ Resulthand getCombs(Hand& hand, Hand& hand1, vector<Hand>& table){
     ans = countLoop(allCart, 3);
     if(ans.count >= 1){ return ans; }
     
-    Resulthand isSet = countLoop(allCart, 2);
-    Resulthand isPair = countLoop(allCart, 1); 
+    ResultHand isSet = countLoop(allCart, 2);
+    ResultHand isPair = countLoop(allCart, 1); 
 
     if(isSet.count == 2 || (isSet.count == 1 && isPair.count >= 1)){
         ans.comb = Combs::fullhouse;
@@ -260,7 +252,7 @@ Resulthand getCombs(Hand& hand, Hand& hand1, vector<Hand>& table){
     }
     if(isPair.count == 1){return isPair; }
 
-    return Resulthand{
+    return ResultHand{
         vector<Hand>{allCart[0]},
         allCart[1],
         Combs::older,
@@ -268,7 +260,7 @@ Resulthand getCombs(Hand& hand, Hand& hand1, vector<Hand>& table){
     };
 }
 
-int winHand(Resulthand one, Resulthand two){   
+int winHand(ResultHand one, ResultHand two){   
     if(one.comb > two.comb){ return 1; }
     if(one.comb < two.comb){ return 2; }
 
@@ -399,29 +391,72 @@ void duel(Hand one1, Hand one2, Hand two1, Hand two2, Statistic& stat, vector<Ha
     }
 }
 
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow){
+    application A;
+    A.WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+    return 0;
+}
+/*
 int main(){
-    Hand hand1 = {Cart::A, Suit::clubs};
-    Hand hand2 = {Cart::A, Suit::diamonds};
-    Hand hand3 = {Cart::two, Suit::clubs};
-    Hand hand4 = {Cart::two, Suit::diamonds};
-    std::set<Hand> handCart;
-    handCart.insert(hand1);
-    handCart.insert(hand2);
-    handCart.insert(hand3);
-    handCart.insert(hand4);
 
-    vector<Hand> freeCart;
+    vector<Hand> freeCartOnePlayer;
     for(int i = Cart::two; i <= Cart::A; i++){
         for(int j = Suit::spades; j <= Suit::clubs; j++){
-            if(handCart.count({Cart{i}, Suit{j}}) == 0){
-                freeCart.push_back({Cart{i}, Suit{j}});
-            }
+            freeCartOnePlayer.push_back({Cart{i}, Suit{j}});
+        } 
+    }
+
+    string file = "all.txt";
+    file = PATH_TO_DB + file;
+    DataBase A(file);
+
+    for(int i1 = 0; i1 < freeCartOnePlayer.size() - 3; i1++){
+        Hand hand1 = freeCartOnePlayer[i1];
+        for(int i2 = i1 + 1; i2 < freeCartOnePlayer.size() - 2; i2++){
+            Hand hand2 = freeCartOnePlayer[i2];
+            for(int i3 = i2 + 1; i3 < freeCartOnePlayer.size() - 1; i3++){
+                Hand hand3 = freeCartOnePlayer[i3];
+                for(int i4 = i3 + 1; i4 < freeCartOnePlayer.size(); i4++){
+                    Hand hand4 = freeCartOnePlayer[i4];
+
+                    std::set<Hand> handCart;
+                    handCart.insert(hand1);
+                    handCart.insert(hand2);
+                    handCart.insert(hand3);
+                    handCart.insert(hand4);
+
+                    vector<Hand> freeCart;
+                    for(int i = Cart::two; i <= Cart::A; i++){
+                        for(int j = Suit::spades; j <= Suit::clubs; j++){
+                            if(handCart.count({Cart{i}, Suit{j}}) == 0){
+                                freeCart.push_back({Cart{i}, Suit{j}});
+                            }
+                        }
+                    }
+
+                    Statistic stat;
+                    duel(hand1, hand2, hand3, hand4, stat, freeCart);
+
+                    A.addCart(stat, hand1, hand2);
+                    A.addCart(stat, hand2, hand1);
+
+                    auto temp = stat.lose;
+                    stat.lose = stat.win;
+                    stat.win = temp;
+
+                    A.addCart(stat, hand3, hand4);
+                    A.addCart(stat, hand4, hand3);
+
+                }
+            } 
+            A.createReserve(file);
+            cout << "complete" << endl;
+            hand1.print();
+            hand2.print();
+            cout << "save" << endl << endl;
         }
     }
 
-    Statistic stat;
-    duel(hand1, hand2, hand3, hand4, stat, freeCart);
-    stat.print();
-
     return 0;
 }
+*/

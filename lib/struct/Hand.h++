@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Cart.h++"
-#include "Suit.h++"
+#include "../stdafx.h++"
 
 struct Hand{
     Cart cart;
